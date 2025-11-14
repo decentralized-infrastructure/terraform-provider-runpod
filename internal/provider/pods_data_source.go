@@ -123,6 +123,9 @@ func (d *PodsDataSource) Configure(ctx context.Context, req datasource.Configure
 func (d *PodsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data PodsDataSourceModel
 
+	// Initialize empty slice
+	data.Pods = []PodDataModel{}
+
 	tflog.Debug(ctx, "Reading Pods data source")
 
 	pods, err := d.client.ListPods(ctx)

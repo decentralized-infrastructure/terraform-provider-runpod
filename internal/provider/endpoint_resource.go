@@ -196,11 +196,11 @@ func (r *EndpointResource) Create(ctx context.Context, req resource.CreateReques
 	tflog.Debug(ctx, "Creating Endpoint")
 
 	input := &EndpointCreateInput{
-		Name:           data.Name.ValueString(),
-		TemplateId:     data.TemplateId.ValueString(),
-		ComputeType:    data.ComputeType.ValueString(),
+		Name:            data.Name.ValueString(),
+		TemplateId:      data.TemplateId.ValueString(),
+		ComputeType:     data.ComputeType.ValueString(),
 		NetworkVolumeId: data.NetworkVolumeId.ValueString(),
-		ScalerType:     data.ScalerType.ValueString(),
+		ScalerType:      data.ScalerType.ValueString(),
 	}
 
 	if !data.GPUCount.IsNull() {
@@ -294,10 +294,10 @@ func (r *EndpointResource) Update(ctx context.Context, req resource.UpdateReques
 	tflog.Debug(ctx, "Updating Endpoint", map[string]interface{}{"id": data.ID.ValueString()})
 
 	input := &EndpointUpdateInput{
-		Name:           data.Name.ValueString(),
-		TemplateId:     data.TemplateId.ValueString(),
+		Name:            data.Name.ValueString(),
+		TemplateId:      data.TemplateId.ValueString(),
 		NetworkVolumeId: data.NetworkVolumeId.ValueString(),
-		ScalerType:     data.ScalerType.ValueString(),
+		ScalerType:      data.ScalerType.ValueString(),
 	}
 
 	if !data.GPUCount.IsNull() {

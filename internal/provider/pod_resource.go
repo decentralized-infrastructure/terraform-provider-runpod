@@ -32,44 +32,45 @@ type PodResource struct {
 
 // PodResourceModel describes the resource data model.
 type PodResourceModel struct {
-	ID                      types.String `tfsdk:"id"`
-	Name                    types.String `tfsdk:"name"`
-	ImageName               types.String `tfsdk:"image_name"`
-	ComputeType             types.String `tfsdk:"compute_type"`
-	CloudType               types.String `tfsdk:"cloud_type"`
-	GPUCount                types.Int64  `tfsdk:"gpu_count"`
-	VCPUCount               types.Int64  `tfsdk:"vcpu_count"`
-	GPUTypeIds              types.List   `tfsdk:"gpu_type_ids"`
-	CPUFlavorIds            types.List   `tfsdk:"cpu_flavor_ids"`
-	DataCenterIds           types.List   `tfsdk:"data_center_ids"`
-	ContainerDiskInGb       types.Int64  `tfsdk:"container_disk_in_gb"`
-	VolumeInGb              types.Int64  `tfsdk:"volume_in_gb"`
-	VolumeMountPath         types.String `tfsdk:"volume_mount_path"`
-	Ports                   types.List   `tfsdk:"ports"`
-	Env                     types.Map    `tfsdk:"env"`
-	DockerEntrypoint        types.List   `tfsdk:"docker_entrypoint"`
-	DockerStartCmd          types.List   `tfsdk:"docker_start_cmd"`
-	TemplateId              types.String `tfsdk:"template_id"`
-	NetworkVolumeId         types.String `tfsdk:"network_volume_id"`
-	Interruptible           types.Bool   `tfsdk:"interruptible"`
-	Locked                  types.Bool   `tfsdk:"locked"`
-	MinVCPUPerGPU           types.Int64  `tfsdk:"min_vcpu_per_gpu"`
-	MinRAMPerGPU            types.Int64  `tfsdk:"min_ram_per_gpu"`
+	ID                      types.String  `tfsdk:"id"`
+	Name                    types.String  `tfsdk:"name"`
+	ImageName               types.String  `tfsdk:"image_name"`
+	ComputeType             types.String  `tfsdk:"compute_type"`
+	CloudType               types.String  `tfsdk:"cloud_type"`
+	GPUCount                types.Int64   `tfsdk:"gpu_count"`
+	VCPUCount               types.Int64   `tfsdk:"vcpu_count"`
+	GPUTypeIds              types.List    `tfsdk:"gpu_type_ids"`
+	CPUFlavorIds            types.List    `tfsdk:"cpu_flavor_ids"`
+	DataCenterIds           types.List    `tfsdk:"data_center_ids"`
+	ContainerDiskInGb       types.Int64   `tfsdk:"container_disk_in_gb"`
+	VolumeInGb              types.Int64   `tfsdk:"volume_in_gb"`
+	VolumeMountPath         types.String  `tfsdk:"volume_mount_path"`
+	Ports                   types.List    `tfsdk:"ports"`
+	Env                     types.Map     `tfsdk:"env"`
+	DockerEntrypoint        types.List    `tfsdk:"docker_entrypoint"`
+	DockerStartCmd          types.List    `tfsdk:"docker_start_cmd"`
+	TemplateId              types.String  `tfsdk:"template_id"`
+	NetworkVolumeId         types.String  `tfsdk:"network_volume_id"`
+	Interruptible           types.Bool    `tfsdk:"interruptible"`
+	Locked                  types.Bool    `tfsdk:"locked"`
+	MinVCPUPerGPU           types.Int64   `tfsdk:"min_vcpu_per_gpu"`
+	MinRAMPerGPU            types.Int64   `tfsdk:"min_ram_per_gpu"`
 	MinDownloadMbps         types.Float64 `tfsdk:"min_download_mbps"`
 	MinUploadMbps           types.Float64 `tfsdk:"min_upload_mbps"`
 	MinDiskBandwidthMBps    types.Float64 `tfsdk:"min_disk_bandwidth_mbps"`
-	SupportPublicIp         types.Bool   `tfsdk:"support_public_ip"`
-	GlobalNetworking        types.Bool   `tfsdk:"global_networking"`
-	AllowedCudaVersions     types.List   `tfsdk:"allowed_cuda_versions"`
-	CountryCodes            types.List   `tfsdk:"country_codes"`
-	GPUTypePriority         types.String `tfsdk:"gpu_type_priority"`
-	CPUFlavorPriority       types.String `tfsdk:"cpu_flavor_priority"`
-	DataCenterPriority      types.String `tfsdk:"data_center_priority"`
-	ContainerRegistryAuthId types.String `tfsdk:"container_registry_auth_id"`
+	SupportPublicIp         types.Bool    `tfsdk:"support_public_ip"`
+	GlobalNetworking        types.Bool    `tfsdk:"global_networking"`
+	AllowedCudaVersions     types.List    `tfsdk:"allowed_cuda_versions"`
+	CountryCodes            types.List    `tfsdk:"country_codes"`
+	GPUTypePriority         types.String  `tfsdk:"gpu_type_priority"`
+	CPUFlavorPriority       types.String  `tfsdk:"cpu_flavor_priority"`
+	DataCenterPriority      types.String  `tfsdk:"data_center_priority"`
+	ContainerRegistryAuthId types.String  `tfsdk:"container_registry_auth_id"`
 	// Computed fields
 	DesiredStatus     types.String  `tfsdk:"desired_status"`
 	PublicIp          types.String  `tfsdk:"public_ip"`
 	MachineId         types.String  `tfsdk:"machine_id"`
+	ActualDataCenter  types.String  `tfsdk:"actual_data_center"`
 	CostPerHr         types.Float64 `tfsdk:"cost_per_hr"`
 	AdjustedCostPerHr types.Float64 `tfsdk:"adjusted_cost_per_hr"`
 	MemoryInGb        types.Float64 `tfsdk:"memory_in_gb"`
@@ -100,7 +101,11 @@ func (r *PodResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"image_name": schema.StringAttribute{
 				MarkdownDescription: "The Docker image tag for the container run on the Pod.",
-				Required:            true,
+				Optional:            true,
+				Computed:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.UseStateForUnknown(),
+				},
 			},
 			"compute_type": schema.StringAttribute{
 				MarkdownDescription: "Set to GPU to create a GPU Pod. Set to CPU to create a CPU Pod.",
@@ -186,6 +191,9 @@ func (r *PodResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			"network_volume_id": schema.StringAttribute{
 				MarkdownDescription: "The unique string identifying the network volume to attach to the Pod.",
 				Optional:            true,
+				PlanModifiers: []planmodifier.String{
+					stringplanmodifier.RequiresReplace(),
+				},
 			},
 			"interruptible": schema.BoolAttribute{
 				MarkdownDescription: "Set to true to create an interruptible or spot Pod. Can be rented at a lower cost but can be stopped at any time.",
@@ -276,6 +284,10 @@ func (r *PodResource) Schema(ctx context.Context, req resource.SchemaRequest, re
 			},
 			"machine_id": schema.StringAttribute{
 				MarkdownDescription: "The unique identifier of the host machine the Pod is running on.",
+				Computed:            true,
+			},
+			"actual_data_center": schema.StringAttribute{
+				MarkdownDescription: "The actual data center where the Pod was deployed.",
 				Computed:            true,
 			},
 			"cost_per_hr": schema.Float64Attribute{
@@ -591,10 +603,19 @@ func (r *PodResource) ImportState(ctx context.Context, req resource.ImportStateR
 func (r *PodResource) updateStateFromPod(ctx context.Context, data *PodResourceModel, pod *Pod) {
 	data.ID = types.StringValue(pod.ID)
 	data.Name = types.StringValue(pod.Name)
-	data.ImageName = types.StringValue(pod.ImageName)
+
+	// Only update ImageName if API returns a non-empty value
+	// RunPod API doesn't return image name in GET responses, so preserve the planned value
+	if pod.ImageName != "" {
+		data.ImageName = types.StringValue(pod.ImageName)
+	}
+
 	data.DesiredStatus = types.StringValue(pod.DesiredStatus)
 	data.PublicIp = types.StringValue(pod.PublicIp)
 	data.MachineId = types.StringValue(pod.MachineId)
+	// TODO: Figure out how to get actual data center from RunPod API
+	// For now, we'll leave this empty until we find a way to determine the region
+	data.ActualDataCenter = types.StringValue("")
 	data.CostPerHr = types.Float64Value(pod.CostPerHr)
 	data.AdjustedCostPerHr = types.Float64Value(pod.AdjustedCostPerHr)
 	data.MemoryInGb = types.Float64Value(pod.MemoryInGb)

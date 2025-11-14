@@ -88,6 +88,9 @@ func (d *NetworkVolumesDataSource) Configure(ctx context.Context, req datasource
 func (d *NetworkVolumesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data NetworkVolumesDataSourceModel
 
+	// Initialize empty slice
+	data.NetworkVolumes = []NetworkVolumeDataModel{}
+
 	tflog.Debug(ctx, "Reading Network Volumes data source")
 
 	volumes, err := d.client.ListNetworkVolumes(ctx)
@@ -96,12 +99,12 @@ func (d *NetworkVolumesDataSource) Read(ctx context.Context, req datasource.Read
 		return
 	}
 
-	for _, volume := range volumes {
+	for _, vol := range volumes {
 		volumeData := NetworkVolumeDataModel{
-			ID:           types.StringValue(volume.ID),
-			Name:         types.StringValue(volume.Name),
-			Size:         types.Int64Value(int64(volume.Size)),
-			DataCenterId: types.StringValue(volume.DataCenterId),
+			ID:           types.StringValue(vol.ID),
+			Name:         types.StringValue(vol.Name),
+			Size:         types.Int64Value(int64(vol.Size)),
+			DataCenterId: types.StringValue(vol.DataCenterId),
 		}
 		data.NetworkVolumes = append(data.NetworkVolumes, volumeData)
 	}

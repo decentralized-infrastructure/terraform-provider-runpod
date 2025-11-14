@@ -1,0 +1,4 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+runpod_api_key = "your-runpod-api-key-here"
+template_id    = "your-template-id-here"

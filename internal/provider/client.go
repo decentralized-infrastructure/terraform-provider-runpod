@@ -182,14 +182,12 @@ func (c *Client) CreatePod(ctx context.Context, input *PodCreateInput) (*Pod, er
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		Pod Pod `json:"pod"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var pod Pod
+	if err := json.NewDecoder(resp.Body).Decode(&pod); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return &result.Pod, nil
+	return &pod, nil
 }
 
 // GetPod retrieves a Pod by ID
@@ -200,14 +198,12 @@ func (c *Client) GetPod(ctx context.Context, id string) (*Pod, error) {
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		Pod Pod `json:"pod"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var pod Pod
+	if err := json.NewDecoder(resp.Body).Decode(&pod); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return &result.Pod, nil
+	return &pod, nil
 }
 
 // UpdatePod updates a Pod (triggers reset)
@@ -218,14 +214,12 @@ func (c *Client) UpdatePod(ctx context.Context, id string, input *PodUpdateInput
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		Pod Pod `json:"pod"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var pod Pod
+	if err := json.NewDecoder(resp.Body).Decode(&pod); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return &result.Pod, nil
+	return &pod, nil
 }
 
 // UpdatePodInPlace updates a Pod without triggering a reset
@@ -236,14 +230,12 @@ func (c *Client) UpdatePodInPlace(ctx context.Context, id string, input *PodUpda
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		Pod Pod `json:"pod"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var pod Pod
+	if err := json.NewDecoder(resp.Body).Decode(&pod); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return &result.Pod, nil
+	return &pod, nil
 }
 
 // DeletePod terminates a Pod
@@ -308,23 +300,23 @@ type Endpoint struct {
 
 // EndpointCreateInput represents the input for creating an Endpoint
 type EndpointCreateInput struct {
-	Name                string            `json:"name,omitempty"`
-	TemplateId          string            `json:"templateId"`
-	ComputeType         string            `json:"computeType,omitempty"`
-	GPUCount            *int              `json:"gpuCount,omitempty"`
-	VCPUCount           *int              `json:"vcpuCount,omitempty"`
-	GPUTypeIds          []string          `json:"gpuTypeIds,omitempty"`
-	CPUFlavorIds        []string          `json:"cpuFlavorIds,omitempty"`
-	DataCenterIds       []string          `json:"dataCenterIds,omitempty"`
-	NetworkVolumeId     string            `json:"networkVolumeId,omitempty"`
-	WorkersMin          *int              `json:"workersMin,omitempty"`
-	WorkersMax          *int              `json:"workersMax,omitempty"`
-	IdleTimeout         *int              `json:"idleTimeout,omitempty"`
-	ExecutionTimeoutMs  *int              `json:"executionTimeoutMs,omitempty"`
-	ScalerType          string            `json:"scalerType,omitempty"`
-	ScalerValue         *int              `json:"scalerValue,omitempty"`
-	AllowedCudaVersions []string          `json:"allowedCudaVersions,omitempty"`
-	Flashboot           *bool             `json:"flashboot,omitempty"`
+	Name                string   `json:"name,omitempty"`
+	TemplateId          string   `json:"templateId"`
+	ComputeType         string   `json:"computeType,omitempty"`
+	GPUCount            *int     `json:"gpuCount,omitempty"`
+	VCPUCount           *int     `json:"vcpuCount,omitempty"`
+	GPUTypeIds          []string `json:"gpuTypeIds,omitempty"`
+	CPUFlavorIds        []string `json:"cpuFlavorIds,omitempty"`
+	DataCenterIds       []string `json:"dataCenterIds,omitempty"`
+	NetworkVolumeId     string   `json:"networkVolumeId,omitempty"`
+	WorkersMin          *int     `json:"workersMin,omitempty"`
+	WorkersMax          *int     `json:"workersMax,omitempty"`
+	IdleTimeout         *int     `json:"idleTimeout,omitempty"`
+	ExecutionTimeoutMs  *int     `json:"executionTimeoutMs,omitempty"`
+	ScalerType          string   `json:"scalerType,omitempty"`
+	ScalerValue         *int     `json:"scalerValue,omitempty"`
+	AllowedCudaVersions []string `json:"allowedCudaVersions,omitempty"`
+	Flashboot           *bool    `json:"flashboot,omitempty"`
 }
 
 // EndpointUpdateInput represents the input for updating an Endpoint
@@ -414,14 +406,12 @@ func (c *Client) ListEndpoints(ctx context.Context) ([]Endpoint, error) {
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		Endpoints []Endpoint `json:"endpoints"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var endpoints []Endpoint
+	if err := json.NewDecoder(resp.Body).Decode(&endpoints); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return result.Endpoints, nil
+	return endpoints, nil
 }
 
 // NetworkVolume represents a RunPod Network Volume
@@ -453,14 +443,12 @@ func (c *Client) CreateNetworkVolume(ctx context.Context, input *NetworkVolumeCr
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		NetworkVolume NetworkVolume `json:"networkVolume"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var volume NetworkVolume
+	if err := json.NewDecoder(resp.Body).Decode(&volume); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return &result.NetworkVolume, nil
+	return &volume, nil
 }
 
 // GetNetworkVolume retrieves a Network Volume by ID
@@ -471,14 +459,12 @@ func (c *Client) GetNetworkVolume(ctx context.Context, id string) (*NetworkVolum
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		NetworkVolume NetworkVolume `json:"networkVolume"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var volume NetworkVolume
+	if err := json.NewDecoder(resp.Body).Decode(&volume); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return &result.NetworkVolume, nil
+	return &volume, nil
 }
 
 // UpdateNetworkVolume updates a Network Volume
@@ -489,14 +475,12 @@ func (c *Client) UpdateNetworkVolume(ctx context.Context, id string, input *Netw
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		NetworkVolume NetworkVolume `json:"networkVolume"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var volume NetworkVolume
+	if err := json.NewDecoder(resp.Body).Decode(&volume); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return &result.NetworkVolume, nil
+	return &volume, nil
 }
 
 // DeleteNetworkVolume deletes a Network Volume
@@ -518,14 +502,12 @@ func (c *Client) ListNetworkVolumes(ctx context.Context) ([]NetworkVolume, error
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		NetworkVolumes []NetworkVolume `json:"networkVolumes"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var volumes []NetworkVolume
+	if err := json.NewDecoder(resp.Body).Decode(&volumes); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return result.NetworkVolumes, nil
+	return volumes, nil
 }
 
 // ListPods lists all Pods
@@ -536,12 +518,50 @@ func (c *Client) ListPods(ctx context.Context) ([]Pod, error) {
 	}
 	defer resp.Body.Close()
 
-	var result struct {
-		Pods []Pod `json:"pods"`
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+	var pods []Pod
+	if err := json.NewDecoder(resp.Body).Decode(&pods); err != nil {
 		return nil, fmt.Errorf("error decoding response: %w", err)
 	}
 
-	return result.Pods, nil
+	return pods, nil
+}
+
+// Template represents a RunPod Template
+type Template struct {
+	ID                      string            `json:"id,omitempty"`
+	Name                    string            `json:"name,omitempty"`
+	ImageName               string            `json:"imageName,omitempty"`
+	Category                string            `json:"category,omitempty"`
+	ContainerDiskInGb       int               `json:"containerDiskInGb,omitempty"`
+	VolumeInGb              int               `json:"volumeInGb,omitempty"`
+	VolumeMountPath         string            `json:"volumeMountPath,omitempty"`
+	Ports                   []string          `json:"ports,omitempty"`
+	Env                     map[string]string `json:"env,omitempty"`
+	DockerEntrypoint        []string          `json:"dockerEntrypoint,omitempty"`
+	DockerStartCmd          []string          `json:"dockerStartCmd,omitempty"`
+	IsPublic                bool              `json:"isPublic,omitempty"`
+	IsRunpod                bool              `json:"isRunpod,omitempty"`
+	IsServerless            bool              `json:"isServerless,omitempty"`
+	Readme                  string            `json:"readme,omitempty"`
+	RuntimeInMin            int               `json:"runtimeInMin,omitempty"`
+	StartJupyter            bool              `json:"startJupyter,omitempty"`
+	StartSsh                bool              `json:"startSsh,omitempty"`
+	ContainerRegistryAuthId string            `json:"containerRegistryAuthId,omitempty"`
+	Earned                  float64           `json:"earned,omitempty"`
+}
+
+// ListTemplates lists all Templates
+func (c *Client) ListTemplates(ctx context.Context) ([]Template, error) {
+	resp, err := c.doRequest(ctx, "GET", "/templates", nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var templates []Template
+	if err := json.NewDecoder(resp.Body).Decode(&templates); err != nil {
+		return nil, fmt.Errorf("error decoding response: %w", err)
+	}
+
+	return templates, nil
 }

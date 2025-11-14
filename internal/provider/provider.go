@@ -122,6 +122,7 @@ func (p *runpodProvider) DataSources(_ context.Context) []func() datasource.Data
 		NewPodsDataSource,
 		NewEndpointsDataSource,
 		NewNetworkVolumesDataSource,
+		NewTemplatesDataSource,
 	}
 }
 

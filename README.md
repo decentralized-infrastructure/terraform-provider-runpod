@@ -1,31 +1,26 @@
 # RunPod Terraform Provider
 
-This repository contains the Community [RunPod](https://www.runpod.io) Terraform Provider. 
-
-**Note that this provider is NOT built by RunPod - it is a community effort.** Please do not ask RunPod for support, as they will not be able to provide it. Please report issues in the GitHub repository.
+Official Terraform provider for [RunPod](https://www.runpod.io) - manage GPU cloud infrastructure as code.
 
 ## Features
 
-- **Pod Management**: Create, read, update, and delete GPU pods
-- **Serverless Endpoints**: Manage serverless endpoints for inference
-- **Template Management**: Create and manage pod templates
-- **Network Volumes**: Manage persistent network storage
-- **Container Registry**: Configure container registry authentication
+- **Pod Management**: Create, read, and delete GPU/CPU pods with flexible configuration
+- **Network Volumes**: Manage persistent storage volumes across pods
+- **Serverless Endpoints**: Deploy and manage serverless GPU endpoints
+- **Data Sources**: Query existing resources including pods, volumes, endpoints, and templates
 
 ## Supported Resources
 
 ### Resources
-- `runpod_pod` - Manage GPU pods
+- `runpod_pod` - Manage GPU/CPU pods
+- `runpod_network_volume` - Manage persistent network storage
 - `runpod_endpoint` - Manage serverless endpoints
-- `runpod_template` - Manage pod templates
-- `runpod_network_volume` - Manage network volumes
-- `runpod_container_registry_auth` - Manage container registry authentication
 
 ### Data Sources
-- `runpod_pods` - List all pods in your account
+- `runpod_pods` - List all pods
+- `runpod_network_volumes` - List all network volumes
 - `runpod_endpoints` - List all serverless endpoints
 - `runpod_templates` - List available templates
-- `runpod_network_volumes` - List network volumes
 
 ## Requirements
 
@@ -45,7 +40,7 @@ This repository contains the Community [RunPod](https://www.runpod.io) Terraform
    terraform {
      required_providers {
        runpod = {
-         source = "registry.terraform.io/decentralized-infrastructure/runpod"
+         source = "decentralized-infrastructure/runpod"
        }
      }
    }
@@ -56,10 +51,18 @@ This repository contains the Community [RunPod](https://www.runpod.io) Terraform
 
    # Create a GPU pod
    resource "runpod_pod" "example" {
-     name          = "my-gpu-pod"
-     gpu_type      = "NVIDIA RTX A4000"
-     gpu_count     = 1
-     container_image = "runpod/pytorch:latest"
+     name              = "my-gpu-pod"
+     image_name        = "runpod/pytorch:2.1.0-py3.10-cuda11.8.0-devel"
+     gpu_type_ids      = ["NVIDIA GeForce RTX 4090", "NVIDIA A40"]
+     data_center_ids   = ["US-CA-2", "US-TX-3"]
+     
+     gpu_count            = 1
+     cloud_type           = "COMMUNITY"
+     support_public_ip    = true
+     volume_in_gb         = 20
+     container_disk_in_gb = 20
+     
+     ports = ["8888/http", "22/tcp"]
    }
    ```
 

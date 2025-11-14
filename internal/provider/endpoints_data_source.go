@@ -138,6 +138,9 @@ func (d *EndpointsDataSource) Configure(ctx context.Context, req datasource.Conf
 func (d *EndpointsDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var data EndpointsDataSourceModel
 
+	// Initialize empty slice
+	data.Endpoints = []EndpointDataModel{}
+
 	tflog.Debug(ctx, "Reading Endpoints data source")
 
 	endpoints, err := d.client.ListEndpoints(ctx)
